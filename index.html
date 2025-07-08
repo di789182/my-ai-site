@@ -40,20 +40,26 @@
       const outputDiv = document.getElementById('output');
       outputDiv.innerHTML = "⏳ Generating...";
 
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
+      try {
+  const response = await fetch('/api/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt })
+  });
 
-      const data = await response.json();
+  const data = await response.json();
+  console.log("Response from API:", data);
 
-      if (response.ok) {
-        const imgUrl = data.data[0].url;
-        outputDiv.innerHTML = `<img src="${imgUrl}" alt="Generated Image">`;
-      } else {
-        outputDiv.innerHTML = `<p style="color:red;">Error: ${JSON.stringify(data)}</p>`;
-      }
+  if (response.ok && data.data && data.data[0]?.url) {
+    const imgUrl = data.data[0].url;
+    outputDiv.innerHTML = `<img src="${imgUrl}" alt="Generated Image">`;
+  } else {
+    outputDiv.innerHTML = `<p style="color:red;">❌ Error: ${JSON.stringify(data)}</p>`;
+  }
+} catch (err) {
+  console.error("Fetch failed:", err);
+  outputDiv.innerHTML = `<p style="color:red;">⚠️ JavaScript Error: ${err.message}</p>`;
+}
     }
   </script>
 </body>
