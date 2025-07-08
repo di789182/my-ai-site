@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Image Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #1f1f1f, #3a3a3a);
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 18px;
+      width: 300px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 30px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Your AI Art Generator</h1>
+  <p>Enter your prompt:</p>
+  <input id="prompt" placeholder="A cat in space wearing sunglasses">
+  <br>
+  <button onclick="generateImage()">Generate</button>
+  <div id="output"></div>
+
+  <script>
+    async function generateImage() {
+      const prompt = document.getElementById('prompt').value;
+      const outputDiv = document.getElementById('output');
+      outputDiv.innerHTML = "⏳ Generating...";
+
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const imgUrl = data.data[0].url;
+        outputDiv.innerHTML = `<img src="${imgUrl}" alt="Generated Image">`;
+      } else {
+        outputDiv.innerHTML = `<p style="color:red;">Error: ${JSON.stringify(data)}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
